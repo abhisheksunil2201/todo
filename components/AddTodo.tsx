@@ -66,6 +66,11 @@ const AddTodo: React.FC = () => {
     }
   };
 
+  const handleClose = () => {
+    setText("");
+    setSubtext("");
+    setAddEditOpen(false);
+  };
   //Disabled because not compatible with nextjs
   // if (isDesktop) {
   //   return (
@@ -102,7 +107,11 @@ const AddTodo: React.FC = () => {
 
   return (
     <>
-      <Drawer open={addEditOpen} onOpenChange={setAddEditOpen}>
+      <Drawer
+        open={addEditOpen}
+        onOpenChange={setAddEditOpen}
+        onClose={handleClose}
+      >
         <DrawerTrigger asChild>
           <Button
             variant="ghost"
