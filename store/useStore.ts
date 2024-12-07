@@ -115,7 +115,7 @@ const useTodoStore = create(
     {
       name: "todo-store", // Key for localStorage
       storage: createJSONStorage(() => localStorage), // Use localStorage for persistence
-      version: 1, // Version for state migrations
+      version: 1,
     }
   )
 );

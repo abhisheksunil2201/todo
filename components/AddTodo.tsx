@@ -32,6 +32,7 @@ const AddTodo: React.FC = () => {
     setAddEditOpen,
     selectedTask,
     selectedDate,
+    setSelectedTask,
   } = useTodoStore();
 
   const [text, setText] = useState<string>(selectedTask?.text || "");
@@ -63,6 +64,7 @@ const AddTodo: React.FC = () => {
       setText("");
       setSubtext("");
       setAddEditOpen(false);
+      setSelectedTask(null);
     }
   };
 
@@ -70,6 +72,7 @@ const AddTodo: React.FC = () => {
     setText("");
     setSubtext("");
     setAddEditOpen(false);
+    setSelectedTask(null);
   };
   //Disabled because not compatible with nextjs
   // if (isDesktop) {
