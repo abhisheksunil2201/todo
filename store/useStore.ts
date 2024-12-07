@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 // Define the shape of a single to-do item
 export interface Todo {
@@ -39,75 +40,84 @@ interface TodoStore {
   setSelectedTask: (selectedTask: Todo | null) => void;
 }
 
-const useTodoStore = create<TodoStore>((set) => ({
-  todos: JSON.parse(localStorage.getItem("todos") || "{}"),
+// Create the Zustand store with persistence
+const useTodoStore = create(
+  persist<TodoStore>(
+    (set, get) => ({
+      todos: {},
 
-  addTodo: (data, date) =>
-    set((state) => {
-      const dateKey = format(date, "yyyy-MM-dd");
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: data.text,
-        subtext: data.subtext,
-        completed: false,
-        date: date,
-      };
-      const updatedTodos = {
-        ...state.todos,
-        [dateKey]: [...(state.todos[dateKey] || []), newTodo],
-      };
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
-      return { todos: updatedTodos };
+      addTodo: (data, date) => {
+        const dateKey = format(date, "yyyy-MM-dd");
+        const newTodo: Todo = {
+          id: Date.now(),
+          text: data.text,
+          subtext: data.subtext,
+          completed: false,
+          date: date,
+        };
+
+        const updatedTodos = {
+          ...get().todos,
+          [dateKey]: [...(get().todos[dateKey] || []), newTodo],
+        };
+
+        set({ todos: updatedTodos });
+      },
+
+      getTodosByDate: (date) => {
+        const dateKey = format(date, "yyyy-MM-dd");
+        return get().todos[dateKey] || [];
+      },
+
+      toggleCompletion: (id, date) => {
+        const dateKey = format(date, "yyyy-MM-dd");
+        const updatedTodos = {
+          ...get().todos,
+          [dateKey]: get().todos[dateKey]?.map((todo) =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+          ),
+        };
+
+        set({ todos: updatedTodos });
+      },
+
+      editTodo: (id, data, date) => {
+        const dateKey = format(date, "yyyy-MM-dd");
+        const updatedTodos = {
+          ...get().todos,
+          [dateKey]: get().todos[dateKey]?.map((todo) =>
+            todo.id === id ? { ...todo, ...data } : todo
+          ),
+        };
+
+        set({ todos: updatedTodos });
+      },
+
+      deleteTodo: (id, date) => {
+        const dateKey = format(date, "yyyy-MM-dd");
+        const updatedTodos = {
+          ...get().todos,
+          [dateKey]: get().todos[dateKey]?.filter((todo) => todo.id !== id),
+        };
+
+        set({ todos: updatedTodos });
+      },
+
+      selectedDate: new Date(),
+      setSelectedDate: (date) => set({ selectedDate: date }),
+
+      addEditOpen: false,
+      setAddEditOpen: (addEditOpen) => set({ addEditOpen }),
+
+      selectedTask: null,
+      setSelectedTask: (selectedTask) => set({ selectedTask }),
     }),
-
-  getTodosByDate: (date) => {
-    const dateKey = format(date, "yyyy-MM-dd");
-    return JSON.parse(localStorage.getItem("todos") || "{}")[dateKey] || [];
-  },
-
-  toggleCompletion: (id, date) =>
-    set((state) => {
-      const dateKey = format(date, "yyyy-MM-dd");
-      const updatedTodos = {
-        ...state.todos,
-        [dateKey]: state.todos[dateKey]?.map((todo) =>
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo
-        ),
-      };
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
-      return { todos: updatedTodos };
-    }),
-
-  editTodo: (id, data, date) =>
-    set((state) => {
-      const dateKey = format(date, "yyyy-MM-dd");
-      const updatedTodos = {
-        ...state.todos,
-        [dateKey]: state.todos[dateKey]?.map((todo) =>
-          todo.id === id ? { ...todo, ...data } : todo
-        ),
-      };
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
-      return { todos: updatedTodos };
-    }),
-
-  deleteTodo: (id, date) =>
-    set((state) => {
-      const dateKey = format(date, "yyyy-MM-dd");
-      const updatedTodos = {
-        ...state.todos,
-        [dateKey]: state.todos[dateKey]?.filter((todo) => todo.id !== id),
-      };
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
-      return { todos: updatedTodos };
-    }),
-
-  selectedDate: new Date(),
-  setSelectedDate: (date) => set({ selectedDate: date }),
-  addEditOpen: false,
-  setAddEditOpen: (addEditOpen) => set({ addEditOpen }),
-  selectedTask: null,
-  setSelectedTask: (selectedTask) => set({ selectedTask }),
-}));
+    {
+      name: "todo-store", // Key for localStorage
+      storage: createJSONStorage(() => localStorage), // Use localStorage for persistence
+      version: 1, // Version for state migrations
+    }
+  )
+);
 
 export default useTodoStore;

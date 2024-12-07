@@ -13,15 +13,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useMediaQuery } from "@uidotdev/usehooks";
+//Disabled because not compatible with nextjs
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import { useMediaQuery } from "@uidotdev/usehooks"; //Disabled because not compatible with nextjs
 
 const AddTodo: React.FC = () => {
   const {
@@ -35,7 +36,7 @@ const AddTodo: React.FC = () => {
 
   const [text, setText] = useState<string>(selectedTask?.text || "");
   const [subtext, setSubtext] = useState<string>(selectedTask?.subtext || "");
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  // const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     if (selectedTask) {
@@ -65,38 +66,39 @@ const AddTodo: React.FC = () => {
     }
   };
 
-  if (isDesktop) {
-    return (
-      <Dialog open={addEditOpen} onOpenChange={setAddEditOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className="shadow-lg text-4xl font-light rounded-full flex items-center justify-center w-16 h-16 bottom-4"
-          >
-            +
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{selectedTask ? "Edit Task" : "Add Task"}</DialogTitle>
-            <DialogDescription>
-              {selectedTask ? "Make changes to the task" : "Add a new task"}
-            </DialogDescription>
-          </DialogHeader>
-          <ProfileForm
-            text={text}
-            setText={setText}
-            subtext={subtext}
-            setSubtext={setSubtext}
-          />
+  //Disabled because not compatible with nextjs
+  // if (isDesktop) {
+  //   return (
+  //     <Dialog open={addEditOpen} onOpenChange={setAddEditOpen}>
+  //       <DialogTrigger asChild>
+  //         <Button
+  //           variant="ghost"
+  //           className="shadow-lg text-4xl font-light rounded-full flex items-center justify-center w-16 h-16 bottom-4"
+  //         >
+  //           +
+  //         </Button>
+  //       </DialogTrigger>
+  //       <DialogContent>
+  //         <DialogHeader>
+  //           <DialogTitle>{selectedTask ? "Edit Task" : "Add Task"}</DialogTitle>
+  //           <DialogDescription>
+  //             {selectedTask ? "Make changes to the task" : "Add a new task"}
+  //           </DialogDescription>
+  //         </DialogHeader>
+  //         <ProfileForm
+  //           text={text}
+  //           setText={setText}
+  //           subtext={subtext}
+  //           setSubtext={setSubtext}
+  //         />
 
-          <Button onClick={handleSubmit}>
-            {selectedTask ? "Save" : "Add"}
-          </Button>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  //         <Button onClick={handleSubmit}>
+  //           {selectedTask ? "Save" : "Add"}
+  //         </Button>
+  //       </DialogContent>
+  //     </Dialog>
+  //   );
+  // }
 
   return (
     <>
