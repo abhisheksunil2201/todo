@@ -25,8 +25,18 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
             onChange={() => toggleCompletion(todo.id, todo.date)}
           />
           <div className="flex-[0.9] w-full">
-            <p className="font-bold text-xl">{todo.text}</p>
-            <p className="font-medium text-md w-full truncate text-wrap">
+            <p
+              className={`font-bold text-xl ${
+                todo.completed ? "line-through" : ""
+              }`}
+            >
+              {todo.text}
+            </p>
+            <p
+              className={`font-medium text-md w-full truncate text-wrap ${
+                todo.completed ? "line-through" : ""
+              }`}
+            >
               {todo.subtext}
             </p>
           </div>
